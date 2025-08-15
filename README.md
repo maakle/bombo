@@ -27,6 +27,53 @@ OPENAI_API_KEY=your_openai_api_key
 NODE_ENV=development  # Optional: set to 'development' for enhanced logging and dev commands
 ```
 
+## Stackhero Object Storage Setup
+
+This bot stores generated images in Stackhero Object Storage (compatible with Amazon S3) for better performance and reliability. To set this up:
+
+### 1. Provision the Add-on
+
+Add Stackhero Object Storage to your Heroku app:
+
+```bash
+heroku addons:create ah-s3-object-storage-stackhero --app <your-app-name>
+```
+
+### 2. Create a Dedicated User
+
+For security, create a dedicated user instead of using root credentials:
+
+1. Open the Stackhero dashboard:
+```bash
+heroku addons:open ah-s3-object-storage-stackhero
+```
+
+2. Select your MinIO service and click "Console"
+3. Login with root credentials (retrieve with `heroku config:get STACKHERO_MINIO_ROOT_ACCESS_KEY`)
+4. Go to "Users" → "Create a user"
+5. Set access key, secret key, and select "readwrite" policy
+
+### 3. Add Environment Variables
+
+Add these variables to your `.env` file:
+
+```bash
+STACKHERO_MINIO_HOST=your-minio-host-here
+STACKHERO_MINIO_ACCESS_KEY=your-access-key-here
+STACKHERO_MINIO_SECRET_KEY=your-secret-key-here
+STACKHERO_MINIO_BUCKET=bombo-images  # Optional, defaults to 'bombo-images'
+```
+
+### 4. Local Development
+
+For local development, you can retrieve the config variables:
+
+```bash
+heroku config:get STACKHERO_MINIO_HOST
+heroku config:get STACKHERO_MINIO_ACCESS_KEY
+heroku config:get STACKHERO_MINIO_SECRET_KEY
+```
+
 ## Installation
 
 1. Install dependencies:
@@ -50,21 +97,22 @@ pnpm dev:watch
 
 ## How It Works
 
-The bot follows a simple flow:
+The bot now follows an enhanced flow with image storage:
 
 1. User types `/generate [description]`
 2. Bot acknowledges the command and posts a "generating" message
 3. Bot calls Replicate's FLUX 1.1 Pro model with the user's prompt
-4. Bot processes the response and updates the message with the generated image
-5. If there's an error, the bot updates the message with error details
+4. Bot downloads the generated image and stores it in Stackhero Object Storage
+5. Bot serves the stored image URL for better performance and reliability
+6. If there's an error, the bot updates the message with error details
 
 ## Architecture
 
-The bot is intentionally simplified with:
-- **Single file structure** (`src/index.ts`) that handles both production and development modes
-- **Environment-based configuration** - set `NODE_ENV=development` for enhanced logging and dev commands
-- **Direct API calls** to Replicate without service abstractions
-- **Inline error handling** and response formatting
+The bot now includes:
+- **Storage Service** (`src/services/storage.ts`) - Handles image storage in Stackhero Object Storage
+- **Main Bot Logic** (`src/index.ts`) - Orchestrates image generation and storage
+- **Environment-based configuration** - Includes storage credentials
+- **Error handling** with proper fallbacks
 
 ## Bombo Character
 

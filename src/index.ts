@@ -1,6 +1,6 @@
 import { App, LogLevel } from '@slack/bolt';
 import dotenv from 'dotenv';
-
+import { StackheroStorageService } from './services/storage';
 
 // Load environment variables
 dotenv.config();
@@ -22,6 +22,18 @@ if (!process.env['OPENAI_API_KEY']) {
   console.error("Error: OPENAI_API_KEY environment variable is required");
   process.exit(1);
 }
+if (!process.env['STACKHERO_MINIO_HOST']) {
+  console.error("Error: STACKHERO_MINIO_HOST environment variable is required");
+  process.exit(1);
+}
+if (!process.env['STACKHERO_MINIO_ACCESS_KEY']) {
+  console.error("Error: STACKHERO_MINIO_ACCESS_KEY environment variable is required");
+  process.exit(1);
+}
+if (!process.env['STACKHERO_MINIO_SECRET_KEY']) {
+  console.error("Error: STACKHERO_MINIO_SECRET_KEY environment variable is required");
+  process.exit(1);
+}
 
 // Initialize App
 const app = new App({
@@ -31,13 +43,24 @@ const app = new App({
   logLevel: LogLevel.INFO,
 });
 
+// Initialize storage service
+let storageService: StackheroStorageService;
+try {
+  storageService = new StackheroStorageService();
+  console.log('Storage service initialized successfully');
+} catch (error) {
+  console.error('Failed to initialize storage service:', error);
+  process.exit(1);
+}
+
 const BOMBO_REFERENCE_IMAGE = "https://github.com/maakle/bombo/blob/main/images/bombo.jpeg?raw=true"
 
 // Handle /generate command
 app.command('/generate', async ({ command, ack, respond }) => {
   await ack();
-  
+
   const prompt = command.text?.trim();
+  console.log("Received prompt:", prompt);
   
   if (!prompt) {
     await respond({
@@ -81,7 +104,7 @@ app.command('/generate', async ({ command, ack, respond }) => {
             - Contain no text unless explicitly instructed
             - Keep the composition circular/oval or otherwise well-contained
             The sticker should visually tell the story using expressive poses, props, and environment. Background elements should be minimal or symbolic, so the focus stays on Bombo.`,
-          quality: "auto",
+          quality: "low",
           background: "transparent",
           moderation: "auto",
           aspect_ratio: "1:1",
@@ -115,18 +138,35 @@ app.command('/generate', async ({ command, ack, respond }) => {
       if (!imageUrl || imageUrl === "None") {
         throw new Error("Invalid image URL generated");
       }
-        
-      // Update the message with the generated image
+
+      // Update status to show storage in progress
       await respond({
-        text: `🎉 *Bombo Image Generated Successfully!*
+        text: `🎨 *Bombo Image Generated Successfully!*
 
 *Prompt:* ${prompt}
 
-Here's your custom Bombo sticker:`,
+⏳ Storing image in secure storage... This will take a few seconds.
+
+*Status:* Storing...`,
+        response_type: 'in_channel',
+        replace_original: true
+      });
+
+      // Store the image in Stackhero Object Storage
+      const fileName = storageService.generateFileName(prompt);
+      const storedImageUrl = await storageService.storeImage(imageUrl, fileName);
+        
+      // Update the message with the stored image
+      await respond({
+        text: `🎉 *Bombo Image Generated and Stored Successfully!*
+
+*Prompt:* ${prompt}
+
+Here's your custom Bombo sticker, securely stored and ready to use:`,
         attachments: [
           {
             fallback: `Bombo sticker: ${prompt}`,
-            image_url: imageUrl
+            image_url: storedImageUrl
           }
         ],
         response_type: 'in_channel',
