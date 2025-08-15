@@ -99,8 +99,7 @@ export class StackheroStorageService implements StorageService {
 
   // Helper method to generate unique filenames
   generateFileName(): string {
-    const timestamp = Date.now();
-    const randomId = Math.random().toString(36).substring(2, 8); // 6 character random string
-    return `bombo-${timestamp}-${randomId}.png`;
+    const randomId = Math.random().toString(36).substring(2, 10); // 8 character random string
+    return `bombo-${randomId}.png`;
   }
 }
