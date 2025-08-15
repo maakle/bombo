@@ -1,5 +1,7 @@
 import { App, LogLevel } from '@slack/bolt';
 import dotenv from 'dotenv';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 // Load environment variables
 dotenv.config();
@@ -30,8 +32,18 @@ const app = new App({
   logLevel: LogLevel.INFO,
 });
 
-// Bombo reference image path
-const BOMBO_REFERENCE_IMAGE = "./images/bombo.jpeg";
+// Function to get Bombo reference image as base64
+function getBomboReferenceImage(): string {
+  try {
+    const imagePath = join(__dirname, '..', 'images', 'bombo.jpeg');
+    const imageBuffer = readFileSync(imagePath);
+    const base64Image = imageBuffer.toString('base64');
+    return `data:image/jpeg;base64,${base64Image}`;
+  } catch (error) {
+    console.error('Error reading Bombo reference image:', error);
+    throw new Error('Failed to load Bombo reference image');
+  }
+}
 
 // Handle /generate command
 app.command('/generate', async ({ command, ack, respond }) => {
@@ -86,7 +98,7 @@ app.command('/generate', async ({ command, ack, respond }) => {
           moderation: "auto",
           aspect_ratio: "1:1",
           input_images: [
-            BOMBO_REFERENCE_IMAGE
+            getBomboReferenceImage()
           ],
           output_format: "png",
           input_fidelity: "low",
