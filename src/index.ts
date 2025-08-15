@@ -30,8 +30,8 @@ const app = new App({
   logLevel: LogLevel.INFO,
 });
 
-// Bombo reference image URL
-const BOMBO_REFERENCE_IMAGE = "https://github.com/maakle/bombo/blob/main/images/bombo.jpeg?raw=true";
+// Bombo reference image path
+const BOMBO_REFERENCE_IMAGE = "./images/bombo.jpeg";
 
 // Handle /generate command
 app.command('/generate', async ({ command, ack, respond }) => {
