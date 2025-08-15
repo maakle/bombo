@@ -104,7 +104,7 @@ app.command('/generate', async ({ command, ack, respond }) => {
             - Contain no text unless explicitly instructed
             - Keep the composition circular/oval or otherwise well-contained
             The sticker should visually tell the story using expressive poses, props, and environment. Background elements should be minimal or symbolic, so the focus stays on Bombo.`,
-          quality: "low",
+          quality: "auto",
           background: "transparent",
           moderation: "auto",
           aspect_ratio: "1:1",
@@ -139,18 +139,6 @@ app.command('/generate', async ({ command, ack, respond }) => {
         throw new Error("Invalid image URL generated");
       }
 
-      // Update status to show storage in progress
-      await respond({
-        text: `🎨 *Bombo Image Generated Successfully!*
-
-*Prompt:* ${prompt}
-
-⏳ Storing image in secure storage... This will take a few seconds.
-
-*Status:* Storing...`,
-        response_type: 'in_channel',
-        replace_original: true
-      });
 
       // Store the image in Stackhero Object Storage
       const fileName = storageService.generateFileName();
@@ -158,11 +146,7 @@ app.command('/generate', async ({ command, ack, respond }) => {
         
       // Update the message with the stored image
       await respond({
-        text: `🎉 *Bombo Image Generated and Stored Successfully!*
-
-*Prompt:* ${prompt}
-
-Here's your custom Bombo sticker, securely stored and ready to use:`,
+        text: `🎉 *Bombo Image Generated and Stored Successfully!*`,
         attachments: [
           {
             fallback: `Bombo sticker: ${prompt}`,
