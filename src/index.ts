@@ -31,7 +31,7 @@ const app = new App({
 });
 
 // Bombo reference image URL
-const BOMBO_REFERENCE_IMAGE = "https://github.com/maakle/bombo-slack/blob/main/images/bombo-wurz.jpeg?raw=true";
+const BOMBO_REFERENCE_IMAGE = "https://github.com/maakle/bombo/blob/main/images/bombo.jpeg?raw=true";
 
 // Handle /generate command
 app.command('/generate', async ({ command, ack, respond }) => {
