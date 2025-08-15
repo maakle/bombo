@@ -76,7 +76,7 @@ app.command('/generate', async ({ command, ack, respond }) => {
 
 *Prompt:* ${prompt}
 
-⏳ Please wait while I create your custom Bombo sticker... This usually takes 30-60 seconds.
+⏳ Please wait while I create your Bombo sticker... This usually takes 30-60 seconds.
 
 *Status:* Processing...`,
     response_type: 'in_channel'
