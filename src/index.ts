@@ -1,7 +1,7 @@
 import { App, LogLevel } from '@slack/bolt';
 import dotenv from 'dotenv';
-import { readFileSync } from 'fs';
-import { join } from 'path';
+import { getBomboReferenceImage } from './util';
+
 
 // Load environment variables
 dotenv.config();
@@ -32,18 +32,7 @@ const app = new App({
   logLevel: LogLevel.INFO,
 });
 
-// Function to get Bombo reference image as base64
-function getBomboReferenceImage(): string {
-  try {
-    const imagePath = join(__dirname, '..', 'images', 'bombo.jpeg');
-    const imageBuffer = readFileSync(imagePath);
-    const base64Image = imageBuffer.toString('base64');
-    return `data:image/jpeg;base64,${base64Image}`;
-  } catch (error) {
-    console.error('Error reading Bombo reference image:', error);
-    throw new Error('Failed to load Bombo reference image');
-  }
-}
+
 
 // Handle /generate command
 app.command('/generate', async ({ command, ack, respond }) => {
@@ -110,12 +99,10 @@ app.command('/generate', async ({ command, ack, respond }) => {
     
     // Process the image generation output
     try {
-      // Handle different possible output formats
       if (!output) {
         throw new Error("No output received from image generation");
       }
       
-      // FLUX 1.1 Pro might return a string URL directly or a list
       let imageUrl: string;
       if (typeof output === 'string') {
         imageUrl = output;
