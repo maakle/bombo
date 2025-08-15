@@ -1,6 +1,5 @@
 import { App, LogLevel } from '@slack/bolt';
 import dotenv from 'dotenv';
-import { getBomboReferenceImage } from './util';
 
 
 // Load environment variables
@@ -32,7 +31,7 @@ const app = new App({
   logLevel: LogLevel.INFO,
 });
 
-
+const BOMBO_REFERENCE_IMAGE = "https://github.com/maakle/bombo/blob/main/images/bombo.jpeg?raw=true"
 
 // Handle /generate command
 app.command('/generate', async ({ command, ack, respond }) => {
@@ -87,7 +86,7 @@ app.command('/generate', async ({ command, ack, respond }) => {
           moderation: "auto",
           aspect_ratio: "1:1",
           input_images: [
-            getBomboReferenceImage()
+            BOMBO_REFERENCE_IMAGE
           ],
           output_format: "png",
           input_fidelity: "low",
