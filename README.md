@@ -12,8 +12,6 @@ A simplified Slack bot that generates custom Bombo character stickers using AI i
 ## Commands
 
 - `/generate [prompt]` - Generate a custom Bombo sticker based on your description
-- `/help` - Show help information
-- `/dev-test` - Test bot functionality (development mode only)
 
 ## Environment Variables
 
@@ -24,7 +22,7 @@ SLACK_BOT_TOKEN=your_slack_bot_token
 SLACK_APP_TOKEN=your_slack_app_token
 REPLICATE_API_TOKEN=your_replicate_api_token
 OPENAI_API_KEY=your_openai_api_key
-NODE_ENV=development  # Optional: set to 'development' for enhanced logging and dev commands
+...
 ```
 
 ## Stackhero Object Storage Setup
