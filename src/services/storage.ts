@@ -5,6 +5,7 @@ export interface StorageService {
   storeImage(imageUrl: string, fileName: string): Promise<string>;
   getImageUrl(fileName: string): Promise<string>;
   deleteImage(fileName: string): Promise<void>;
+  generateFileName(): string;
 }
 
 export class StackheroStorageService implements StorageService {
@@ -97,9 +98,9 @@ export class StackheroStorageService implements StorageService {
   }
 
   // Helper method to generate unique filenames
-  generateFileName(prompt: string): string {
+  generateFileName(): string {
     const timestamp = Date.now();
-    const sanitizedPrompt = prompt.replace(/[^a-zA-Z0-9]/g, '-').substring(0, 50);
-    return `bombo-${sanitizedPrompt}-${timestamp}.png`;
+    const randomId = Math.random().toString(36).substring(2, 8); // 6 character random string
+    return `bombo-${timestamp}-${randomId}.png`;
   }
 }

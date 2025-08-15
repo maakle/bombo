@@ -153,7 +153,7 @@ app.command('/generate', async ({ command, ack, respond }) => {
       });
 
       // Store the image in Stackhero Object Storage
-      const fileName = storageService.generateFileName(prompt);
+      const fileName = storageService.generateFileName();
       const storedImageUrl = await storageService.storeImage(imageUrl, fileName);
         
       // Update the message with the stored image
