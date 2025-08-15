@@ -72,7 +72,7 @@ app.command('/generate', async ({ command, ack, respond }) => {
 
   // Send initial response
   await respond({
-    text: `🎨 *Generating Bombo Image*
+    text: `🎨 *Generating Bombo image*
 
 *Prompt:* ${prompt}
 
@@ -146,7 +146,7 @@ app.command('/generate', async ({ command, ack, respond }) => {
         
       // Update the message with the stored image
       await respond({
-        text: `🎉 *Bombo Image Generated and Stored Successfully!*`,
+        text: `🎉 *Image generated successfully!*`,
         attachments: [
           {
             fallback: `Bombo sticker: ${prompt}`,
