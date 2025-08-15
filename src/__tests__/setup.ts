@@ -34,5 +34,3 @@ process.env['SLACK_BOT_TOKEN'] = 'xoxb-test-token';
 process.env['SLACK_APP_TOKEN'] = 'xapp-test-token';
 process.env['REPLICATE_API_TOKEN'] = 'test-replicate-token';
 process.env['OPENAI_API_KEY'] = 'test-openai-key';
-process.env['BOT_NAME'] = 'Test Bombo Bot';
-process.env['LOG_LEVEL'] = 'error';
