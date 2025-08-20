@@ -79,9 +79,9 @@ export class StackheroStorageService implements StorageService {
 
   async getImageUrl(fileName: string): Promise<string> {
     try {
-      // Generate a presigned URL that's valid for 1 hour
-      const url = await this.client.presignedGetObject(this.bucket, fileName, 3600);
-      return url;
+      // Return direct public URL since bucket is public that we can share links
+      const host = process.env['STACKHERO_MINIO_HOST'];
+      return `https://${host}/${this.bucket}/${fileName}`;
     } catch (error) {
       console.error('Error generating image URL:', error);
       throw new Error(`Failed to generate image URL: ${error instanceof Error ? error.message : 'Unknown error'}`);
